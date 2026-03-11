@@ -1,77 +1,81 @@
 # ESP32 Breath Controller (Elastomer Stretch Sensor)
 
-Tento projekt implementuje systém pro detekci dechu pomocí **vodivé elastomerové gumové trubičky (stretch sensor)**. Systém na základě analýzy dechové křivky ovládá vzduchový kompresor (např. pro aroma terapii, asistované dýchání nebo biofeedback).
+This project implements a breath detection system using a **conductive elastomer rubber cord (stretch sensor)**. Based on the analysis of the breath curve, the system controls an air compressor (e.g., for aromatherapy, assisted breathing, or biofeedback).
 
-Projekt obsahuje pokročilé webové rozhraní ve stylu **Tasmota** s živým grafem, možností manuálního ovládání a OTA aktualizací.
+The project features an advanced **Tasmota-style** web interface with a live chart, manual control options, and OTA updates.
 
-## 🧬 Princip fungování senzoru
+## 🧬 Sensor Working Principle
 
-Jako senzor se využívá speciální **uhlíková vodivá guma** (elastomer cord).
+A special **conductive carbon rubber** (elastomer cord) is used as the sensor.
 
-1.  Guma se upevní kolem hrudníku (např. pomocí kineziologické pásky nebo popruhu).
-2.  Při nádechu se hrudník roztáhne -> guma se natáhne.
-3.  **Změna odporu:** Při natažení se mění elektrický odpor materiálu.
-4.  ESP32 měří tento odpor přes dělič napětí na analogovém vstupu a softwarově detekuje fáze dechu (nádech/výdech).
+1.  The cord is fastened around the chest (e.g., using kinesiology tape or a strap).
+2.  During inhalation, the chest expands -> the cord stretches.
+3.  **Resistance change:** When stretched, the electrical resistance of the material changes.
+4.  The ESP32 measures this resistance via a voltage divider on an analog input and software-detects breath phases (inhalation/exhalation).
 
 ## ⚙️ Hardware
 
-*   **MCU:** ESP32 (DevKit V1 nebo kompatibilní)
-*   **Senzor:** Vodivá guma (Conductive Rubber Cord / Stretch Sensor)
-*   **Akční člen:** Relé například pro Mini vzduchový kompresor (5V/12V)
-*   **Spínání:** MOSFET tranzistor (např. IRLZ44N) nebo relé modul
-*   **Rezistor:** 10kΩ - 47kΩ (pro dělič napětí se senzorem)
+*   **MCU:** ESP32 (DevKit V1 or compatible)
+*   **Sensor:** Conductive Rubber Cord / Stretch Sensor
+*   **Actuator:** Relay (e.g., for Mini air compressor 5V/12V)
+*   **Switching:** MOSFET transistor (e.g., IRLZ44N) or relay module
+*   **Resistor:** 10kΩ - 47kΩ (for voltage divider with sensor)
 
-### Zapojení (Pinout)
+### Wiring (Pinout)
 
-| Komponenta | ESP32 Pin | Poznámka |
+| Component | ESP32 Pin | Note |
 | :--- | :--- | :--- |
-| **Senzor (ADC)** | `GPIO 34` | Analogový vstup (zapojeno jako dělič napětí) |
-| **Kompresor (PWM)** | `GPIO 25` | Výstup pro Gate MOSFETu |
+| **Sensor (ADC)** | `GPIO 34` | Analog input (wired as voltage divider) |
+| **Compressor (PWM)** | `GPIO 25` | Output for MOSFET Gate |
 
-*Poznámka: Senzor zapojte do série s rezistorem mezi 3.3V a GND. Bod mezi senzorem a rezistorem připojte na GPIO 34.*
+*Note: Connect the sensor in series with a resistor between 3.3V and GND. Connect the point between the sensor and resistor to GPIO 34.*
 
-## 🖥️ Webové rozhraní (WebUI)
+## 🖥️ Web Interface (WebUI)
 
-Po připojení k WiFi (nebo přes AP) je dostupné rozhraní na IP adrese ESP32 (port 80).
+After connecting to WiFi (or via AP), the interface is available at the ESP32's IP address (port 80).
 
 <img width="361" height="638" alt="image" src="https://github.com/user-attachments/assets/f8d5338d-8467-4e81-b89b-3c94081c148d" />
 
-*   **Design:** Tasmota Dark Theme (vhodné pro mobilní telefony).
-*   **Live Chart:** Živý graf dechové křivky (canvas, 20Hz refresh).
-*   **Indikátory:**
-    *   `🔼 IN` - Nádech (Inhaling)
-    *   `⏸️ HOLD IN` - Zadržení dechu (Plnost)
-    *   `🔽 EX` - Výdech (Exhaling)
-    *   `⏸️ HOLD EX` - Klidový stav (Vydechnuto)
-*   **Ovládání:**
-    *   **Breathe Pump:** Spíná kompresor pouze pokud je detekován nádech nebo klidový stav (podržení tlačítka).
-    *   **Force Pump:** Spíná kompresor okamžitě bez ohledu na dech (manuální override).
+*   **Design:** Tasmota Dark Theme (optimized for mobile phones).
+*   **Live Chart:** Live breath curve chart (canvas, 20Hz refresh).
+*   **Indicators:**
+    *   `🔼 IN` - Inhalation
+    *   `⏸️ HOLD IN` - Breath hold (Full)
+    *   `🔽 EX` - Exhalation
+    *   `⏸️ HOLD EX` - Resting state (Exhaled)
+*   **Control:**
+    *   **Breathe Pump:** Activates the compressor only if inhalation or resting state is detected (hold button).
+    *   **Force Pump:** Activates the compressor immediately regardless of breath state (manual override).
 
-## 🚀 Instalace a Flashování
+## 🚀 Installation and Flashing
 
-Projekt je postaven na frameworku **PlatformIO**.
+The project is built on the **PlatformIO** framework.
 
-1.  Otevřete složku projektu v VS Code s rozšířením PlatformIO.
-2.  Připojte ESP32 přes USB.
-3.  Nahrajte firmware (tlačítko šipky v dolní liště nebo `PlatformIO: Upload`).
+1.  Open the project folder in VS Code with the PlatformIO extension.
+2.  Connect ESP32 via USB.
+3.  Upload firmware (arrow button in the bottom bar or `PlatformIO: Upload`).
 
-### První spuštění (WiFi Manager)
+### First Run (WiFi Manager)
 
-1.  Po nahrání kódu, pokud ESP32 nezná vaši WiFi, vytvoří přístupový bod (Hotspot) s názvem:
+1.  After uploading, if the ESP32 doesn't know your WiFi credentials, it creates an Access Point (Hotspot) named:
     *   SSID: **BreathSensorAP**
-    *   Heslo: *(bez hesla)*
-2.  Připojte se telefonem k této síti.
-3.  Automaticky vyskočí konfigurační stránka (Captive Portal).
-4.  Vyberte svou domácí WiFi, zadejte heslo a uložte.
-5.  ESP32 se restartuje a připojí do vaší sítě.
+    *   Password: *(no password)*
+2.  Connect to this network with your phone.
+3.  A configuration page (Captive Portal) should pop up automatically.
+4.  Select your home WiFi, enter the password, and save.
+5.  The ESP32 will restart and connect to your network.
 
-## 🧩 Struktura kódu
+## 🧩 Code Structure
 
-*   `src/main.cpp` - Hlavní smyčka a inicializace.
-*   `src/sensor.cpp` - Logika čtení ADC, filtrace šumu a detekce dechu.
-*   `src/network.cpp` - WiFiManager, WebServer, HTML/JS generátor.
-*   `src/globals.cpp` - Sdílené proměnné a konfigurace.
+*   `src/main.cpp` - Main loop and initialization.
+*   `src/sensor.cpp` - ADC reading logic, noise filtration, and breath detection.
+*   `src/network.cpp` - WiFiManager, WebServer, HTML/JS generator.
+*   `src/globals.cpp` - Shared variables and configuration.
 
-## 🛠️ Ladění
+## 🛠️ Debugging
 
-Pro ladění senzoru otevřete **Serial Monitor** (baudrate 115200) nebo **Serial Plotter**. Uvidíte surová data, filtrovaná data a detekované stavy v reálném čase.
+For sensor debugging, open **Serial Monitor** (baudrate 115200) or **Serial Plotter**. You will see raw data, filtered data, and detected states in real-time.
+
+---
+
+*Author: Generated by Gemini Code Assist*
