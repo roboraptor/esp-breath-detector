@@ -34,6 +34,8 @@ Jako senzor se využívá speciální **uhlíková vodivá guma** (elastomer cor
 
 Po připojení k WiFi (nebo přes AP) je dostupné rozhraní na IP adrese ESP32 (port 80).
 
+<img width="361" height="638" alt="image" src="https://github.com/user-attachments/assets/f8d5338d-8467-4e81-b89b-3c94081c148d" />
+
 *   **Design:** Tasmota Dark Theme (vhodné pro mobilní telefony).
 *   **Live Chart:** Živý graf dechové křivky (canvas, 20Hz refresh).
 *   **Indikátory:**
