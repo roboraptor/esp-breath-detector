@@ -1,12 +1,12 @@
-# ESP32 Breath Controller (Elastomer Stretch Sensor)
+# ESP32 Breath Sensor PoC (Elastomer Stretch Sensor)
 
-Tento projekt implementuje systém pro detekci dechu pomocí **vodivé elastomerové gumové trubičky (stretch sensor)**. Systém na základě analýzy dechové křivky ovládá vzduchový kompresor (např. pro aroma terapii, asistované dýchání nebo biofeedback).
+Tento projekt je **proof-of-concept** pro detekci dechu pomocí **vodivé elastomerové gumové trubičky (stretch sensor)**. Ukazuje, jak lze pomocí ESP32 a jednoduché elektroniky analyzovat dechovou křivku v reálném čase. Výstupní signál může být dále použit k ovládání různých zařízení, ale primárním cílem je demonstrace samotné senzorické technologie.
 
 Projekt obsahuje pokročilé webové rozhraní ve stylu **Tasmota** s živým grafem, možností manuálního ovládání a OTA aktualizací.
 
 ## 🧬 Princip fungování senzoru
 
-Jako senzor se využívá speciální **uhlíková vodivá guma** (elastomer cord).
+Jako senzor se využívá **uhlíková vodivá guma** (conductive elastomer cord).
 
 1.  Guma se upevní kolem hrudníku (např. pomocí kineziologické pásky nebo popruhu).
 2.  Při nádechu se hrudník roztáhne -> guma se natáhne.
@@ -17,16 +17,16 @@ Jako senzor se využívá speciální **uhlíková vodivá guma** (elastomer cor
 
 *   **MCU:** ESP32 (DevKit V1 nebo kompatibilní)
 *   **Senzor:** Vodivá guma (Conductive Rubber Cord / Stretch Sensor)
-*   **Akční člen:** Relé například pro Mini vzduchový kompresor (5V/12V)
-*   **Spínání:** MOSFET tranzistor (např. IRLZ44N) nebo relé modul
+*   **Akční člen (příklad):** Relé pro demonstraci spínání (např. pro Mini vzduchový kompresor 5V/12V)
+*   **Spínání (příklad):** MOSFET tranzistor (např. IRLZ44N) nebo relé modul pro ovládání externího zařízení
 *   **Rezistor:** 10kΩ - 47kΩ (pro dělič napětí se senzorem)
 
 ### Zapojení (Pinout)
 
 | Komponenta | ESP32 Pin | Poznámka |
 | :--- | :--- | :--- |
-| **Senzor (ADC)** | `GPIO 34` | Analogový vstup (zapojeno jako dělič napětí) |
-| **Kompresor (PWM)** | `GPIO 25` | Výstup pro Gate MOSFETu |
+| **Senzor (ADC)** | `GPIO 34` | Analogový vstup pro měření odporu (dělič napětí) |
+| **Výstup (PWM/Digital)** | `GPIO 25` | Příklad výstupu pro ovládání (např. Gate MOSFETu) |
 
 *Poznámka: Senzor zapojte do série s rezistorem mezi 3.3V a GND. Bod mezi senzorem a rezistorem připojte na GPIO 34.*
 
@@ -44,8 +44,8 @@ Po připojení k WiFi (nebo přes AP) je dostupné rozhraní na IP adrese ESP32 
     *   `🔽 EX` - Výdech (Exhaling)
     *   `⏸️ HOLD EX` - Klidový stav (Vydechnuto)
 *   **Ovládání:**
-    *   **Breathe Pump:** Spíná kompresor pouze pokud je detekován nádech nebo klidový stav (podržení tlačítka).
-    *   **Force Pump:** Spíná kompresor okamžitě bez ohledu na dech (manuální override).
+    *   **Breathe Pump:** Aktivuje výstupní signál pouze pokud je detekován nádech nebo klidový stav. Demonstruje reaktivní ovládání na základě dechu.
+    *   **Force Pump:** Aktivuje výstupní signál okamžitě bez ohledu na dech (pro testování a manuální override).
 
 ## 🚀 Instalace a Flashování
 

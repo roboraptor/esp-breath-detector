@@ -1,77 +1,75 @@
-# ESP32 Breath Controller (Elastomer Stretch Sensor)
+# ESP32 Breath Sensor PoC (Elastomer Stretch Sensor)
 
-This project implements a breath detection system using a **conductive elastomer rubber cord (stretch sensor)**. Based on the analysis of the breath curve, the system controls an air compressor (e.g., for aromatherapy, assisted breathing, or biofeedback).
+This project is a **proof-of-concept** for breath detection using a **conductive elastomer rubber tube (stretch sensor)**. It demonstrates how to analyze a breathing curve in real-time using an ESP32 and simple electronics. The output signal can be used to control various devices, but the primary goal is to demonstrate the sensor technology itself.
 
-The project features an advanced **Tasmota-style** web interface with a live chart, manual control options, and OTA updates.
+The project includes an advanced **Tasmota-style** web interface with a live chart, manual control options, and OTA update capabilities.
 
-## 🧬 Sensor Working Principle
+## 🧬 Sensor Principle
 
-A special **conductive carbon rubber** (elastomer cord) is used as the sensor.
+The sensor used is a **conductive carbon rubber** (elastomer cord).
 
-1.  The cord is fastened around the chest (e.g., using kinesiology tape or a strap).
-2.  During inhalation, the chest expands -> the cord stretches.
-3.  **Resistance change:** When stretched, the electrical resistance of the material changes.
-4.  The ESP32 measures this resistance via a voltage divider on an analog input and software-detects breath phases (inhalation/exhalation).
+1.  The rubber cord is secured around the chest (e.g., with kinesiology tape or a strap).
+2.  As the chest expands during inhalation, the cord stretches.
+3.  **Resistance Change:** The stretching changes the material's electrical resistance.
+4.  The ESP32 measures this resistance via a voltage divider on an analog input and programmatically detects breathing phases (inhalation/exhalation).
 
 ## ⚙️ Hardware
 
 *   **MCU:** ESP32 (DevKit V1 or compatible)
 *   **Sensor:** Conductive Rubber Cord / Stretch Sensor
-*   **Actuator:** Relay (e.g., for Mini air compressor 5V/12V)
-*   **Switching:** MOSFET transistor (e.g., IRLZ44N) or relay module
-*   **Resistor:** 10kΩ - 47kΩ (for voltage divider with sensor)
+*   **Actuator (Example):** A relay to demonstrate switching (e.g., for a 5V/12V mini air pump).
+*   **Switching (Example):** A MOSFET transistor (e.g., IRLZ44N) or a relay module to control an external device.
+*   **Resistor:** 10kΩ - 47kΩ (for the voltage divider with the sensor)
 
-### Wiring (Pinout)
+### Pinout
 
 | Component | ESP32 Pin | Note |
 | :--- | :--- | :--- |
-| **Sensor (ADC)** | `GPIO 34` | Analog input (wired as voltage divider) |
-| **Compressor (PWM)** | `GPIO 25` | Output for MOSFET Gate |
+| **Sensor (ADC)** | `GPIO 34` | Analog input for resistance measurement (voltage divider) |
+| **Output (PWM/Digital)** | `GPIO 25` | Example output for control (e.g., MOSFET Gate) |
 
-*Note: Connect the sensor in series with a resistor between 3.3V and GND. Connect the point between the sensor and resistor to GPIO 34.*
+*Note: Connect the sensor in series with the resistor between 3.3V and GND. Connect the point between the sensor and the resistor to GPIO 34.*
 
 ## 🖥️ Web Interface (WebUI)
 
-After connecting to WiFi (or via AP), the interface is available at the ESP32's IP address (port 80).
+After connecting to WiFi (or via AP mode), the interface is available at the ESP32's IP address (port 80).
 
-<img width="361" height="638" alt="image" src="https://github.com/user-attachments/assets/f8d5338d-8467-4e81-b89b-3c94081c148d" />
-
-*   **Design:** Tasmota Dark Theme (optimized for mobile phones).
-*   **Live Chart:** Live breath curve chart (canvas, 20Hz refresh).
+*   **Design:** Tasmota Dark Theme (mobile-friendly).
+*   **Live Chart:** Real-time graph of the breathing curve (canvas, 20Hz refresh).
 *   **Indicators:**
-    *   `🔼 IN` - Inhalation
-    *   `⏸️ HOLD IN` - Breath hold (Full)
-    *   `🔽 EX` - Exhalation
-    *   `⏸️ HOLD EX` - Resting state (Exhaled)
-*   **Control:**
-    *   **Breathe Pump:** Activates the compressor only if inhalation or resting state is detected (hold button).
-    *   **Force Pump:** Activates the compressor immediately regardless of breath state (manual override).
+    *   `🔼 IN` - Inhaling
+    *   `⏸️ HOLD IN` - Breath Hold (Full)
+    *   `🔽 EX` - Exhaling
+    *   `⏸️ HOLD EX` - Rest State (Empty)
+*   **Controls:**
+    *   **Breathe Pump:** Activates the output signal only when inhalation or a resting state is detected. Demonstrates reactive control based on breathing.
+    *   **Force Pump:** Activates the output signal immediately, regardless of breath (for testing and manual override).
 
 ## 🚀 Installation and Flashing
 
 The project is built on the **PlatformIO** framework.
 
 1.  Open the project folder in VS Code with the PlatformIO extension.
-2.  Connect ESP32 via USB.
-3.  Upload firmware (arrow button in the bottom bar or `PlatformIO: Upload`).
+2.  Connect the ESP32 via USB.
+3.  Upload the firmware (click the arrow icon in the bottom bar or run `PlatformIO: Upload`).
 
 ### First Run (WiFi Manager)
 
-1.  After uploading, if the ESP32 doesn't know your WiFi credentials, it creates an Access Point (Hotspot) named:
+1.  After flashing, if the ESP32 doesn't know your WiFi credentials, it will create an access point (Hotspot):
     *   SSID: **BreathSensorAP**
-    *   Password: *(no password)*
+    *   Password: *(none)*
 2.  Connect to this network with your phone.
-3.  A configuration page (Captive Portal) should pop up automatically.
+3.  A configuration page (Captive Portal) should appear automatically.
 4.  Select your home WiFi, enter the password, and save.
 5.  The ESP32 will restart and connect to your network.
 
 ## 🧩 Code Structure
 
-*   `src/main.cpp` - Main loop and initialization.
-*   `src/sensor.cpp` - ADC reading logic, noise filtration, and breath detection.
+*   `src/main.cpp` - Main loop and initializations.
+*   `src/sensor.cpp` - ADC reading, noise filtering, and breath detection logic.
 *   `src/network.cpp` - WiFiManager, WebServer, HTML/JS generator.
 *   `src/globals.cpp` - Shared variables and configuration.
 
 ## 🛠️ Debugging
 
-For sensor debugging, open **Serial Monitor** (baudrate 115200) or **Serial Plotter**. You will see raw data, filtered data, and detected states in real-time.
+For sensor debugging, open the **Serial Monitor** (baud rate 115200) or **Serial Plotter**. You will see raw data, filtered data, and detected states in real-time.
