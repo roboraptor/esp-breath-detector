@@ -80,20 +80,21 @@
     <canvas id='chart' width='340' height='150' style='background:#1a1a1a;border-radius:4px;margin-bottom:10px'></canvas>
 
     <div class='btn-row'>
-     <div id='btnBreathe' class='btn-sq'>Breathe<br>Pump</div>
-     <div id='btnForce' class='btn-sq'>Force<br>Pump</div>
+     <div id='btnBreathe' class='btn-sq'>Breathe<br>Aroma</div>
+     <div id='btnForce' class='btn-sq'>Force<br>Aroma</div>
     </div>
 
     <table>
-      <tr><td>Stav systému</td><td id='val_state'>⏸️ HOLD EX</td></tr>
+      <tr><td>Sensor Phase</td><td id='val_state'>⏸️ HOLD EX</td></tr>
       <tr><td>Sensor (Raw)</td><td id='val_raw'>2045</td></tr>
       <tr><td>Sensor (Filter)</td><td id='val_filt'>2043.4</td></tr>
-      <tr><td>Kompresor</td><td id='val_pump'>🟥 OFF</td></tr>
+      <tr><td>Sensor (Derivative)</td><td id='val_deriva'>0</td></tr>
+      <tr><td>Aroma</td><td id='val_pump'>🟥 OFF</td></tr>
       <tr><td>WiFi Signál</td><td id='val_rssi'>-62 dBm</td></tr>
     </table>
 
     <form action='#' method='post'>
-      <button class='red'>Restartovat zařízení</button>
+      <button class='red'>Restart device</button>
     </form>
     
     <p class='s'>
@@ -115,8 +116,8 @@
     var filteredValue = 0;
     var lastFilteredValue = 0;
     var localMin = 4095;
-    const ALPHA_LOW = 0.1;
-    const ALPHA_HIGH = 0.4;
+    const ALPHA_LOW = 0.16;
+    const ALPHA_HIGH = 0.08;
 
     // Simulace chování tlačítek
     function setupBtn(id, type) {
@@ -134,9 +135,16 @@
     // Simulace dat (v ESP32 by zde byl fetch)
     function update() {
       t += 0.1;
-      // Generování falešné sinusovky s šumem pro demonstraci
-      var simVal = 2000 + Math.sin(t) * 500 + (Math.random() * 50);
+
+      // Generování signálu podle vzorce f(t) = A⋅sin(ωt) + B⋅cos(2ωt)
+      const A = 600; // Amplituda hlavní sinusovky
+      const B = 350; // Amplituda druhé harmonické (pro zkosení)
+      var simVal1 = 2000 + A * Math.sin(t) + B * Math.cos(2 * t) + (Math.random() * 50);
       
+      const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
+      var simVal = clamp(simVal1, 1000, 2300);
+
+
       // --- PORT C++ LOGIKY DO JS ---
       // Inicializace na začátku
       if (filteredValue === 0) { filteredValue = simVal; lastFilteredValue = simVal; }
@@ -145,6 +153,9 @@
       var currentAlpha = (currentState === "EXHALED") ? ALPHA_HIGH : ALPHA_LOW;
       filteredValue = (currentAlpha * simVal) + ((1.0 - currentAlpha) * lastFilteredValue);
       var derivative = filteredValue - lastFilteredValue;
+
+
+
 
       // 2. Stavový automat (shodný s sensor.cpp)
       switch (currentState) {
@@ -159,7 +170,7 @@
           if (derivative < -5.0) currentState = "EXHALING";
           break;
         case "EXHALING":
-          if (derivative > -1.0) { currentState = "EXHALED"; localMin = filteredValue; }
+          if (derivative > -0.8) { currentState = "EXHALED"; localMin = filteredValue; }
           break;
       }
 
@@ -178,6 +189,7 @@
       document.getElementById('val_state').innerText = displayState;
       document.getElementById('val_raw').innerText = Math.round(simVal);
       document.getElementById('val_filt').innerText = filteredValue.toFixed(1);
+      document.getElementById('val_deriva').innerText = derivative.toFixed(1);
       document.getElementById('val_pump').innerText = pumpState ? "🟩 ON" : "🟥 OFF";
       
       lastFilteredValue = filteredValue;
