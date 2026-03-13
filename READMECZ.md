@@ -44,8 +44,8 @@ Po připojení k WiFi (nebo přes AP) je dostupné rozhraní na IP adrese ESP32 
     *   `🔽 EX` - Výdech (Exhaling)
     *   `⏸️ HOLD EX` - Klidový stav (Vydechnuto)
 *   **Ovládání:**
-    *   **Breathe Pump:** Aktivuje výstupní signál pouze pokud je detekován nádech nebo klidový stav. Demonstruje reaktivní ovládání na základě dechu.
-    *   **Force Pump:** Aktivuje výstupní signál okamžitě bez ohledu na dech (pro testování a manuální override).
+    *   **Breathe Aroma:** Aktivuje výstupní signál pouze pokud je detekován nádech nebo klidový stav. Demonstruje reaktivní ovládání na základě dechu.
+    *   **Force Aroma:** Aktivuje výstupní signál okamžitě bez ohledu na dech (pro testování a manuální override).
 
 ## 🚀 Instalace a Flashování
 
