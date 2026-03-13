@@ -34,6 +34,8 @@ The sensor used is a **conductive carbon rubber** (elastomer cord).
 
 After connecting to WiFi (or via AP mode), the interface is available at the ESP32's IP address (port 80).
 
+<img width="358" height="679" alt="image" src="https://github.com/user-attachments/assets/b4af0be0-f4f8-4f97-9e9e-79d2633d0864" />
+
 *   **Design:** Tasmota Dark Theme (mobile-friendly).
 *   **Live Chart:** Real-time graph of the breathing curve (canvas, 20Hz refresh).
 *   **Indicators:**
