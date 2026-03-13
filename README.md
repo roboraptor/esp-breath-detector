@@ -42,8 +42,8 @@ After connecting to WiFi (or via AP mode), the interface is available at the ESP
     *   `🔽 EX` - Exhaling
     *   `⏸️ HOLD EX` - Rest State (Empty)
 *   **Controls:**
-    *   **Breathe Pump:** Activates the output signal only when inhalation or a resting state is detected. Demonstrates reactive control based on breathing.
-    *   **Force Pump:** Activates the output signal immediately, regardless of breath (for testing and manual override).
+    *   **Breathe Aroma:** Activates the output signal only when inhalation or a resting state is detected. Demonstrates reactive control based on breathing.
+    *   **Force Aroma:** Activates the output signal immediately, regardless of breath (for testing and manual override).
 
 ## 🚀 Installation and Flashing
 
